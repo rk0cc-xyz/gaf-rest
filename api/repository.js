@@ -33,3 +33,5 @@ repos.get("/", buildRateLimit(1, 500), (req, res) => {
         res.json(gaf.context);
     });
 });
+
+module.exports = repos;

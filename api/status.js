@@ -23,3 +23,5 @@ status.get("/", buildRateLimit(), (req, res) => {
         res.json(defaultStatus);
     });
 });
+
+module.exports = status;
