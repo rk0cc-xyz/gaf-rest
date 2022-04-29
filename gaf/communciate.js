@@ -1,5 +1,5 @@
 const { Response } = require("express");
-const { GAFExecutionError } = require("./handler");
+const GAFExecutionError = require("./handler").GAFExecuteError;
 
 /**
  * @param {Response} res 

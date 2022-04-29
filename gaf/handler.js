@@ -67,8 +67,9 @@ async function getGAFAll() {
     return runGAF(["-all"]);
 }
 
+module.exports.GAFExecuteError = GAFExecuteError;
+
 module.exports = {
-    GAFExecuteError,
     getGAFPaged,
     getGAFAll
 };
