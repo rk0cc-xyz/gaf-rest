@@ -51,4 +51,5 @@ subroutes.forEach((sr) => {
 
 app.use("/api/github", apiroot);
 
-app.listen();
+const server = app.listen();
+server.setTimeout(30 * 1000);
