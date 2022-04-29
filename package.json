@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "engines": {
+    "node": ">=14.0.0 <15.0.0"
+  },
+  "name": "gaf_rest",
+  "version": "1.0.0",
+  "description": "Middleware between GAF and REST",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.0",
+    "express-rate-limit": "^6.4.0"
+  }
+}

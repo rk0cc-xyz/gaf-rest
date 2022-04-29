@@ -1,9 +1,54 @@
-var http = require('http');
-var server = http.createServer(function(req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    var message = 'It works!\n',
-        version = 'NodeJS ' + process.versions.node + '\n',
-        response = [message, version].join('\n');
-    res.end(response);
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+
+app.all(/.*/, function (req, res, next) {
+    var host = req.header("host");
+    if (host.match(/^www\..*/i)) {
+        next();
+    } else {
+        res.redirect(301, "https://www." + host + req.originalUrl);
+    }
 });
-server.listen();
+
+app.set("query parser", "simple");
+
+const subroutes = [
+    {
+        path: "/",
+        route: require("./api/entry")
+    },
+    {
+        path: "/repository",
+        route: require("./api/repository")
+    },
+    {
+        path: "/counts",
+        route: require("./api/counts")
+    },
+    {
+        path: "/status",
+        route: require("./api/status")
+    }
+];
+
+const apiroot = express.Router();
+
+apiroot.use(cors({
+    methods: ["GET"],
+    maxAge: 900
+}));
+
+apiroot.use((req, res, next) => {
+    res.setHeader("X-Powered-By", "GAF");
+    next();
+});
+
+subroutes.forEach((sr) => {
+    apiroot.use(sr.path, sr.route);
+});
+
+app.use("/api/github", apiroot);
+
+app.listen();
