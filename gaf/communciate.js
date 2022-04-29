@@ -8,7 +8,7 @@ const GAFExecutionError = require("./handler").GAFExecuteError;
 module.exports = function (res, action) {
     action()
         .catch((e) => {
-            if (e instanceof GAFExecutionError) {
+            if (e.name === GAFExecutionError.name) {
                 res.status(503).json({
                     error: "GAF executed with error."
                 });
