@@ -27,7 +27,8 @@ async function runGAF(args) {
             var exitcode = code || 0;
 
             if (exitcode !== 0) {
-                reject(new GAFExecuteError());
+                var err = new GAFExecuteError();
+                reject(err);
             } else {
                 resolve(JSON.parse(result));
             }
