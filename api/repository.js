@@ -15,7 +15,19 @@ repos.get("/", buildRateLimit(1, 500), async (req, res) => {
     }
 
     try {
-        var gaf = await getGAFPaged(parseInt(reqp), parseInt(reqppi));
+        var ip, ippi;
+
+        try {
+            ip = parseInt(reqp)
+            ippi = parseInt(reqppi)
+        } catch (e) {
+            res.status(403).json({
+                error: "Page and ppi must be integer."
+            });
+            return;
+        }
+
+        var gaf = await getGAFPaged(ip, ippi);
 
         if (Object.keys(gaf).length === 0) {
             res.json([]);

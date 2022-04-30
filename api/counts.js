@@ -27,6 +27,10 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
     if (Array.isArray(pin)) {
         pin = pin[0];
     }
+    var top = req.query.top || "0";
+    if (Array.isArray(top)) {
+        top = top[0];
+    }
 
     const inc_other = pio.toLowerCase() === "true";
     const inc_none = pin.toLowerCase() === "true";
@@ -80,9 +84,23 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
         var ca = { ...analyser };
         var sorteda = {};
 
+        var tc;
+
+        try {
+           tc = parseInt(top);
+           if (tc < 0) {
+               throw "";
+           }
+        } catch (e) {
+            res.status(403).json({
+                error: "Top number must be non-negative integer."
+            })
+        }
+
         while (Object.keys(ca).length !== 0) {
             var cmn = "";
             var cmc = BigInt(0);
+            var processed = 0;
 
             for (var [k, v] of Object.entries(ca)) {
                 if (cmc < v || (cmc === v && k.localeCompare(cmn) < 0)) {
@@ -93,6 +111,10 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
 
             sorteda[cmn] = cmc.toString();
             delete ca[cmn];
+
+            if (tc !== 0 && ++processed >= tc) {
+                break;
+            }
         }
 
         res.setHeader("X-GAF-Last-Updated-At", gaf.last_update);
