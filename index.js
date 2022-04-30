@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const rateLimit = require("express-rate-limit");
 
 const app = express();
 
@@ -13,30 +12,20 @@ app.all(/.*/, function (req, res, next) {
     }
 });
 
+app.set('trust proxy', 1);
 app.set("query parser", "simple");
 
-const rl = rateLimit({
-    windowMs:  1000,
-    max: 500,
-    skip: (req, res) => req.ip === "127.0.0.1" || res.status === 301,
-    message: {
-        error: "Rate limit reached"
-    }
-});
+const apiroot = express.Router();
 
-app.use("/api/github", rl);
-
-app.use("/api/github", cors({
+apiroot.use(cors({
     methods: ["GET"],
     maxAge: 900
 }));
 
-app.use("/api/github", (req, res, next) => {
+apiroot.use("/api/github", (req, res, next) => {
     res.setHeader("X-Powered-By", "GAF");
     next();
 });
-
-const apiroot = express.Router();
 
 const subroutes = [
     {
