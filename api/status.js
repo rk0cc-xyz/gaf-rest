@@ -2,7 +2,7 @@ const status = require("express").Router();
 const { getGAFAll } = require("../gaf/handler");
 const buildRateLimit = require("./ratelimit");
 
-status.get("/", buildRateLimit(), (req, res) => {
+status.get("/", buildRateLimit(), async (req, res) => {
     var defaultStatus = {
         total_repository: 0
     };
