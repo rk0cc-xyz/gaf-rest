@@ -6,16 +6,16 @@ class Countainer {
     /**
      * @type {Record<string, BigInt>}
      */
-    #count = {};
+    container = {};
 
     /**
      * @param {string} name 
      */
     count(name) {
-        if (this.#count[name]) {
-            this.#count[name] += BigInt(1);
+        if (this.container[name]) {
+            this.container[name] += BigInt(1);
         } else {
-            this.#count[name] = BigInt(1);
+            this.container[name] = BigInt(1);
         }
     }
 
@@ -23,7 +23,7 @@ class Countainer {
      * @return {Record<string, string>}
      */
     exportObject() {
-        var cloned = { ...this.#count };
+        var cloned = { ...this.container };
         var sorted = {};
 
         while (Object.keys(cloned).length !== 0) {
