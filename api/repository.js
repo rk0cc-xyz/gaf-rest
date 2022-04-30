@@ -3,8 +3,8 @@ const { getGAFPaged } = require("../gaf/handler");
 const buildRateLimit = require("./ratelimit");
 
 repos.get("/", buildRateLimit(1, 500), async (req, res) => {
-    var reqp = req.query.page;
-    var reqppi = req.query.ppi;
+    var reqp = req.query.page || "1";
+    var reqppi = req.query.ppi || "10";
 
     if (Array.isArray(reqp)) {
         reqp = reqp[0];
