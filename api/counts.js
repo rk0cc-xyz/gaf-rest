@@ -2,51 +2,6 @@ const counts = require("express").Router();
 const { getGAFAll } = require("../gaf/handler");
 const buildRateLimit = require("./ratelimit");
 
-class Countainer {
-    constructor() {
-        /**
-         * @type {Record<string, BigInt>}
-         */
-        this.container = {};
-    }
-
-    /**
-     * @param {string} name 
-     */
-    count(name) {
-        if (this.container[name]) {
-            this.container[name] += BigInt(1);
-        } else {
-            this.container[name] = BigInt(1);
-        }
-    }
-
-    /**
-     * @return {Record<string, string>}
-     */
-    exportObject() {
-        var cloned = { ...this.container };
-        var sorted = {};
-
-        while (Object.keys(cloned).length !== 0) {
-            var cmn = "";
-            var cmc = BigInt(0);
-
-            for (var [k, v] of Object.entries(cloned)) {
-                if (cmc < v || (cmc === v && k.localeCompare(cmn) < 0)) {
-                    cmn = k;
-                    cmc = v;
-                }
-            }
-
-            sorted[cmn] = cmc.toString();
-            delete cloned[cmn];
-        }
-
-        return sorted;
-    }
-}
-
 counts.get("/", (req, res) => {
     res.json({
         language: "./language",
@@ -110,11 +65,36 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
                 throw new Error("Undefined section reached analysing process is not allowed.");
         }
 
-        var countainer = new Countainer();
-        analyse.forEach(countainer.count);
+        var analyser = {};
+
+        analyse.forEach((sk) => {
+            if (Object.keys(analyser).includes(sk)) {
+                analyser[sk] += BigInt(1);
+            } else {
+                analyser[sk] = BigInt(1);
+            }
+        });
+
+        var ca = { ...analyser };
+        var sorteda = {};
+
+        while (Object.keys(ca).length !== 0) {
+            var cmn = "";
+            var cmc = BigInt(0);
+
+            for (var [k, v] of Object.entries(ca)) {
+                if (cmc < v || (cmc === v && k.localeCompare(cmn) < 0)) {
+                    cmn = k;
+                    cmc = v;
+                }
+            }
+
+            sorteda[cmn] = cmc.toString();
+            delete ca[cmn];
+        }
 
         res.setHeader("X-GAF-Last-Updated-At", gaf.last_update);
-        res.json(countainer.exportObject);
+        res.contentType("application/json").send(JSON.stringify(sorteda));
     } catch (e) {
         throw e;
         /*res.status(500).json({
