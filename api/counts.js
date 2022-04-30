@@ -59,7 +59,9 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
             case "topics":
                 analyse = [];
                 gaf.context.map((v) => v.topics)
-                    .forEach(analyse.concat);
+                    .forEach((v) => {
+                        analyse = analyse.concat(v);
+                    });
                 break;
             default:
                 throw new Error("Undefined section reached analysing process is not allowed.");
