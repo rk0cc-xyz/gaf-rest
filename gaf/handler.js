@@ -1,15 +1,5 @@
 const { spawn } = require("child_process");
 
-class GAFExecuteError extends Error {
-    constructor() {
-        super("GAF exited with error code");
-    }
-
-    get name() {
-        return "GAFExecuteError";
-    }
-}
-
 /**
  * @typedef {{name: string, name: string, is_fork: boolean, is_archive: boolean, starred: string, watched: string, forked: string, opened_issue: string, language: string, license: string, topics: string[]}} GAFContextNode
  * @typedef {{last_update: string, context: GAFContextNode[]}} GAFOutput
@@ -72,8 +62,6 @@ async function getGAFPaged(page, ppi) {
 async function getGAFAll() {
     return runGAF(["-all"]);
 }
-
-module.exports.GAFExecuteError = GAFExecuteError;
 
 module.exports = {
     getGAFPaged,

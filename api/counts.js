@@ -1,6 +1,5 @@
 const counts = require("express").Router();
 const { getGAFAll } = require("../gaf/handler");
-const GAFProcessor = require("../gaf/communciate");
 const buildRateLimit = require("./ratelimit");
 
 class Countainer {
@@ -54,28 +53,28 @@ counts.get("/", (req, res) => {
     });
 });
 
-class CountProcessor extends GAFProcessor {
-    async onHandle(req, res) {
-        const section = req.params.section;
-        if (!["language", "license", "topics"].includes(section)) {
-            res.status(404).json({
-                error: "No counting analysis in this section, and ensure use lower case only."
-            });
-            return;
-        }
+counts.get("/:section", buildRateLimit(), (req, res) => {
+    const section = req.params.section;
+    if (!["language", "license", "topics"].includes(section)) {
+        res.status(404).json({
+            error: "No counting analysis in this section, and ensure use lower case only."
+        });
+        return;
+    }
 
-        var pio = req.query["with-other"] || "";
-        if (Array.isArray(pio)) {
-            pio = pio[0];
-        }
-        var pin = req.query["with-none"] || "";
-        if (Array.isArray(pin)) {
-            pin = pin[0];
-        }
+    var pio = req.query["with-other"] || "";
+    if (Array.isArray(pio)) {
+        pio = pio[0];
+    }
+    var pin = req.query["with-none"] || "";
+    if (Array.isArray(pin)) {
+        pin = pin[0];
+    }
 
-        const inc_other = pio.toLowerCase() === "true";
-        const inc_none = pin.toLowerCase() === "true";
+    const inc_other = pio.toLowerCase() === "true";
+    const inc_none = pin.toLowerCase() === "true";
 
+    try {
         var gaf = await getGAFAll();
         var analyse;
 
@@ -114,9 +113,11 @@ class CountProcessor extends GAFProcessor {
 
         res.setHeader("X-GAF-Last-Updated-At", gaf.last_update);
         res.json(countainer.exportObject);
+    } catch (e) {
+        res.status(500).json({
+            error: "GAF internal error"
+        });
     }
-}
-
-counts.get("/:section", buildRateLimit(), new CountProcessor().process);
+});
 
 module.exports = counts;
