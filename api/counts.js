@@ -114,9 +114,10 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
         res.setHeader("X-GAF-Last-Updated-At", gaf.last_update);
         res.json(countainer.exportObject);
     } catch (e) {
-        res.status(500).json({
+        throw e;
+        /*res.status(500).json({
             error: "GAF internal error"
-        });
+        });*/
     }
 });
 
