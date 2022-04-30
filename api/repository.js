@@ -1,6 +1,5 @@
 const repos = require("express").Router();
 const { getGAFPaged } = require("../gaf/handler");
-const GAFProcessor = require("../gaf/communciate");
 const buildRateLimit = require("./ratelimit");
 
 repos.get("/", buildRateLimit(1, 500), async (req, res) => {
