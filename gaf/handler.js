@@ -32,10 +32,7 @@ async function runGAF(args) {
             proc.stdout.on("data", function (data) {
                 result = data.toString();
             });
-            proc.stderr.on("data", function (data) {
-                err = data.toString();
-            })
-            proc.on("close", function (code) {
+            proc.on("close", function (code, signal) {
                 if (result) {
                     resolve(JSON.parse(result));
                 } else {
