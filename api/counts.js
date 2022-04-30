@@ -1,6 +1,5 @@
 const counts = require("express").Router();
 const { getGAFAll } = require("../gaf/handler");
-const buildRateLimit = require("./ratelimit");
 
 counts.get("/", (req, res) => {
     res.json({
@@ -9,8 +8,6 @@ counts.get("/", (req, res) => {
         topics: "./topics"
     });
 });
-
-counts.use("/:section", buildRateLimit());
 
 counts.get("/:section", async (req, res) => {
     const section = req.params.section;

@@ -1,8 +1,5 @@
 const status = require("express").Router();
 const { getGAFAll } = require("../gaf/handler");
-const buildRateLimit = require("./ratelimit");
-
-status.use(buildRateLimit());
 
 status.get("/", async (req, res) => {
     var defaultStatus = {
