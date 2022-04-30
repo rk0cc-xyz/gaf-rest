@@ -97,11 +97,11 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
             })
         }
 
+        var processed = 0;
         while (Object.keys(ca).length !== 0) {
             var cmn = "";
             var cmc = BigInt(0);
-            var processed = 0;
-
+            
             for (var [k, v] of Object.entries(ca)) {
                 if (cmc < v || (cmc === v && k.localeCompare(cmn) < 0)) {
                     cmn = k;
@@ -120,7 +120,6 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
         res.setHeader("X-GAF-Last-Updated-At", gaf.last_update);
         res.contentType("application/json").send(JSON.stringify(sorteda));
     } catch (e) {
-        throw e;
         res.status(500).json({
             error: "GAF internal error"
         });
