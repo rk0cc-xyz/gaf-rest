@@ -26,11 +26,11 @@ async function runGAF(args) {
          * @param {(exitcode: number) => void} reject 
          */
         function (resolve, reject) {
-            var result;
+            var result = "";
             var proc = spawn(process.env.GAF_BIN, ["-get"].concat(args));
             proc.stdout.setEncoding("utf-8");
             proc.stdout.on("data", function (data) {
-                result = data.toString();
+                result += data.toString();
             });
             proc.on("close", function (code, signal) {
                 if (result) {
