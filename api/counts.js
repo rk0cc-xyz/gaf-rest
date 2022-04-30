@@ -121,9 +121,9 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
         res.contentType("application/json").send(JSON.stringify(sorteda));
     } catch (e) {
         throw e;
-        /*res.status(500).json({
+        res.status(500).json({
             error: "GAF internal error"
-        });*/
+        });
     }
 });
 
