@@ -3,10 +3,12 @@ const { getGAFAll } = require("../gaf/handler");
 const buildRateLimit = require("./ratelimit");
 
 class Countainer {
-    /**
-     * @type {Record<string, BigInt>}
-     */
-    container = {};
+    constructor() {
+        /**
+         * @type {Record<string, BigInt>}
+         */
+        this.container = {};
+    }
 
     /**
      * @param {string} name 
