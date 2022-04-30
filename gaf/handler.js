@@ -19,8 +19,8 @@ class GAFExecuteError extends Error {
  * 
  * @return {Promise<GAFOutput|GAFOutputPaged>}
  */
-async function runGAF(args) {
-    return await Promise(
+function runGAF(args) {
+    return new Promise(
         /**
          * @param {(gaf: GAFOutput|GAFOutputPaged) => void} resolve 
          * @param {(exitcode: number) => void} reject 
@@ -32,13 +32,12 @@ async function runGAF(args) {
             proc.stdout.on("data", function (data) {
                 result += data.toString();
             });
-            proc.on("close", function (code, signal) {
-                if (result) {
-                    resolve(JSON.parse(result));
-                } else {
-                    reject(new GAFExecuteError());
-                }
+            proc.on("exit", function (code, signal) {
+                resolve(JSON.parse(result));
             });
+            proc.on("error", function (err) {
+                reject(err);
+            })
         });
 }
 
@@ -64,14 +63,14 @@ async function getGAFPaged(page, ppi) {
         intppi -= intppi % 10;
     }
 
-    return await runGAF(["-page", intp.toString(), "-ppi", intppi.toString()]);
+    return runGAF(["-page", intp.toString(), "-ppi", intppi.toString()]);
 }
 
 /**
  * @return {Promise<GAFOutput>}
  */
 async function getGAFAll() {
-    return await runGAF(["-all"]);
+    return runGAF(["-all"]);
 }
 
 module.exports.GAFExecuteError = GAFExecuteError;
