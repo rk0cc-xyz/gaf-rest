@@ -1,13 +1,26 @@
-const { Response } = require("express");
+const { Request, Response } = require("express");
+const GAFExecuteError = require("./handler").GAFExecuteError;
 
-/**
- * @param {Response} res 
- * @param {() => Promise<void>} action 
- */
-module.exports = function (res, action) {
-    action()
-        .catch((e) => {
-            if (e.name === "GAFExecutionError") {
+module.exports = class GAFProcessor {
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     */
+    async onHandle(req, res) {
+        throw new Error("No implementation");
+    }
+
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     */
+    async process(req, res) {
+        try {
+            await this.onHandle(req, res);
+        } catch (e) {
+            if (e instanceof GAFExecuteError) {
                 res.status(503).json({
                     error: "GAF executed with error."
                 });
@@ -16,5 +29,6 @@ module.exports = function (res, action) {
                     error: "Unexpected internal error happened when making request."
                 });
             }
-        });
+        }
+    }
 }

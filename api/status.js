@@ -1,14 +1,14 @@
 const status = require("express").Router();
 const { getGAFAll } = require("../gaf/handler");
-const gafAction = require("../gaf/communciate");
+const GAFProcessor = require("../gaf/communciate");
 const buildRateLimit = require("./ratelimit");
 
-status.get("/", buildRateLimit(), (req, res) => {
-    var defaultStatus = {
-        total_repository: 0
-    };
+class StatusProcessor extends GAFProcessor {
+    async onHandle(req, res) {
+        var defaultStatus = {
+            total_repository: 0
+        };
 
-    gafAction(res, async () => {
         var gaf = await getGAFAll();
 
         if (Object.keys(gaf).length === 0) {
@@ -21,7 +21,9 @@ status.get("/", buildRateLimit(), (req, res) => {
         res.setHeader("X-GAF-Last-Updated-At", gaf.last_update);
 
         res.json(defaultStatus);
-    });
-});
+    }
+}
+
+status.get("/", buildRateLimit(), new StatusProcessor().process);
 
 module.exports = status;
