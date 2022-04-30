@@ -18,32 +18,31 @@ class GAFExecuteError extends Error {
  * @param {string[]} args 
  * 
  * @return {Promise<GAFOutput|GAFOutputPaged>}
- * 
- * @throws {number} Non-zero exitcode
  */
 async function runGAF(args) {
-    return Promise(
+    return await Promise(
         /**
          * @param {(gaf: GAFOutput|GAFOutputPaged) => void} resolve 
          * @param {(exitcode: number) => void} reject 
          */
         function (resolve, reject) {
-            var env = process.env
             var result;
+            var err;
             var proc = subprocess.spawn(process.env.GAF_BIN, ["-get"].concat(args));
             proc.stdout.setEncoding("utf-8");
             proc.stdout.on("data", function (data) {
                 result = data.toString();
             });
+            proc.stderr.on("data", function (data) {
+                err = data.toString();
+            })
             proc.on("close", function (code) {
-                var exitcode = code || 0;
-
-                if (exitcode !== 0) {
-                    var err = new GAFExecuteError();
-
+                if (result) {
+                    resolve(JSON.parse(result));
+                } else if (err) {
                     reject(err);
                 } else {
-                    resolve(JSON.parse(result));
+                    reject(code.toString())
                 }
             });
         });

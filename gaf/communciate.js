@@ -20,15 +20,15 @@ module.exports = class GAFProcessor {
         try {
             await this.onHandle(req, res);
         } catch (e) {
-            if ((e.name || "") === "GAFExecuteError") {
+            /*if ((e.name || "") === "GAFExecuteError") {
                 res.status(503).json({
                     error: "GAF executed with error."
                 });
-            } else {
+            } else {*/
                 res.status(500).json({
-                    error: "Unexpected internal error happened when making request."
+                    error: e
                 });
-            }
+            //}
         }
     }
 }
