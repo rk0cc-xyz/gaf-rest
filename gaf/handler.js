@@ -32,9 +32,11 @@ async function runGAF(args) {
             proc.stdout.setEncoding("utf-8");
             proc.stdout.on("data", function (data) {
                 result = data.toString();
+                console.error({success: result});
             });
             proc.stderr.on("data", function (data) {
                 err = data.toString();
+                console.error({error: err});
             })
             proc.on("close", function (code) {
                 if (result) {
