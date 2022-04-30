@@ -90,6 +90,8 @@ counts.get("/:section", buildRateLimit(), async (req, res) => {
            tc = parseInt(top);
            if (tc < 0) {
                throw "";
+           } else if (tc > 10) {
+               tc = 10;
            }
         } catch (e) {
             res.status(403).json({
