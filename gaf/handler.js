@@ -1,4 +1,4 @@
-const subprocess = require("child_process");
+const { spawn } = require("child_process");
 
 class GAFExecuteError extends Error {
     constructor() {
@@ -27,24 +27,19 @@ async function runGAF(args) {
          */
         function (resolve, reject) {
             var result;
-            var err;
-            var proc = subprocess.spawn(process.env.GAF_BIN, ["-get"].concat(args));
+            var proc = spawn(process.env.GAF_BIN, ["-get"].concat(args));
             proc.stdout.setEncoding("utf-8");
             proc.stdout.on("data", function (data) {
                 result = data.toString();
-                console.error({success: result});
             });
             proc.stderr.on("data", function (data) {
                 err = data.toString();
-                console.error({error: err});
             })
             proc.on("close", function (code) {
                 if (result) {
                     resolve(JSON.parse(result));
-                } else if (err) {
-                    reject(err);
                 } else {
-                    reject(code.toString())
+                    reject(new GAFExecuteError());
                 }
             });
         });
@@ -72,14 +67,14 @@ async function getGAFPaged(page, ppi) {
         intppi -= intppi % 10;
     }
 
-    return runGAF(["-page", intp.toString(), "-ppi", intppi.toString()]);
+    return await runGAF(["-page", intp.toString(), "-ppi", intppi.toString()]);
 }
 
 /**
  * @return {Promise<GAFOutput>}
  */
 async function getGAFAll() {
-    return runGAF(["-all"]);
+    return await runGAF(["-all"]);
 }
 
 module.exports.GAFExecuteError = GAFExecuteError;
