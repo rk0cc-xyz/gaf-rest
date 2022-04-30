@@ -20,7 +20,7 @@ module.exports = class GAFProcessor {
         try {
             await this.onHandle(req, res);
         } catch (e) {
-            if (e instanceof GAFExecuteError) {
+            if ((e.name || "") === "GAFExecuteError") {
                 res.status(503).json({
                     error: "GAF executed with error."
                 });

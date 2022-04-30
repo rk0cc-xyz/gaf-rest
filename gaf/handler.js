@@ -4,6 +4,10 @@ class GAFExecuteError extends Error {
     constructor() {
         super("GAF exited with error code");
     }
+
+    get name() {
+        return "GAFExecuteError";
+    }
 }
 
 /**
