@@ -10,7 +10,9 @@ counts.get("/", (req, res) => {
     });
 });
 
-counts.get("/:section", buildRateLimit(), async (req, res) => {
+counts.use("/:section", buildRateLimit());
+
+counts.get("/:section", async (req, res) => {
     const section = req.params.section;
     if (!["language", "license", "topics"].includes(section)) {
         res.status(404).json({

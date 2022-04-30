@@ -2,7 +2,9 @@ const repos = require("express").Router();
 const { getGAFPaged } = require("../gaf/handler");
 const buildRateLimit = require("./ratelimit");
 
-repos.get("/", buildRateLimit(1, 500), async (req, res) => {
+repos.use(buildRateLimit(1, 500));
+
+repos.get("/", async (req, res) => {
     var reqp = req.query.page || "1";
     var reqppi = req.query.ppi || "10";
 
