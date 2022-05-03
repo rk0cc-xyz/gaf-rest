@@ -18,11 +18,11 @@ app.set("query parser", "simple");
 const apiroot = express.Router();
 
 apiroot.use(cors({
-    methods: ["GET"],
+    methods: ["GET", "HEAD"],
     maxAge: 900
 }));
 
-apiroot.use("/api/github", (req, res, next) => {
+apiroot.use((req, res, next) => {
     res.setHeader("X-Powered-By", "GAF");
     next();
 });
